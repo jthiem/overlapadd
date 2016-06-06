@@ -8,9 +8,10 @@ much faster.  See the Jupyter notebook for a timing test
 on an ancient (Core2Duo) Mac Mini (using Anaconda Python 3.5).
 
 The reason this is much faster is that while both lfilter and
-my olafilter are O(N) with respect to x (the signal being 
+my olafilt are O(N) with respect to x (the signal being 
 filterd), lfilter is (I think) O(N^2) w.r.t. the filter (b).
-Overlap-add is O(N log N).
+Overlap-add is O(N log N).  The higher the order of the
+filter, the more olafilt wins in terms of speed.
 
 Finally it's also generally faster than scipy.signal.fftconvolve,
 which os O(N log N) of _the maximum_ of the signal and the
