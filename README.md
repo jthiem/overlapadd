@@ -18,3 +18,8 @@ which os O(N log N) of _the maximum_ of the signal and the
 filter since it converts both into frequency domain, with the
 FFT size given by the larger of the two - this only works well
 if both x and b are of similar size.
+
+## TODO
+
+- Add ability to set and save state (trivial)
+- Allow for complex signals (also trivial, should be separate function)
