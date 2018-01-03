@@ -34,22 +34,26 @@ def olafilt(b, x, zi=None):
 
     L_I = b.shape[0]
     # Find power of 2 larger that 2*L_I (from abarnert on Stackoverflow)
-    L_F = 2<<(L_I-1).bit_length()  
+    L_F = 2<<(L_I-1).bit_length()
     L_S = L_F - L_I + 1
     L_sig = x.shape[0]
     offsets = range(0, L_sig, L_S)
 
-    # blockwise frequency domain multiplication
+    # handle complex or real input
     if np.iscomplexobj(b) or np.iscomplexobj(x):
-        FDir = np.fft.fft(b, n=L_F)
+        fft_func = np.fft.fft
+        ifft_func = np.fft.ifft
         res = np.zeros(L_sig+L_F, dtype=np.complex128)
     else:
-        FDir = np.fft.rfft(b, n=L_F)
+        fft_func = np.fft.rfft
+        ifft_func = np.fft.irfft
         res = np.zeros(L_sig+L_F)
+
+    FDir = fft_func(b, n=L_F)
 
     # overlap and add
     for n in offsets:
-        res[n:n+L_F] += np.fft.irfft(np.fft.rfft(x[n:n+L_S], n=L_F)*FDir)
+        res[n:n+L_F] += ifft_func(fft_func(x[n:n+L_S], n=L_F)*FDir)
 
     if zi is not None:
         res[:zi.shape[0]] = res[:zi.shape[0]] + zi
