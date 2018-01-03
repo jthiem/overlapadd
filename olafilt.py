@@ -42,18 +42,14 @@ def olafilt(b, x, zi=None):
     # blockwise frequency domain multiplication
     if np.iscomplexobj(b) or np.iscomplexobj(x):
         FDir = np.fft.fft(b, n=L_F)
-        tempresult = [np.fft.ifft(np.fft.fft(x[n:n+L_S], n=L_F)*FDir)
-                      for n in offsets]
         res = np.zeros(L_sig+L_F, dtype=np.complex128)
     else:
         FDir = np.fft.rfft(b, n=L_F)
-        tempresult = [np.fft.irfft(np.fft.rfft(x[n:n+L_S], n=L_F)*FDir)
-                      for n in offsets]
         res = np.zeros(L_sig+L_F)
 
     # overlap and add
-    for i, n in enumerate(offsets):
-        res[n:n+L_F] += tempresult[i]
+    for n in offsets:
+        res[n:n+L_F] += np.fft.irfft(np.fft.rfft(x[n:n+L_S], n=L_F)*FDir)
 
     if zi is not None:
         res[:zi.shape[0]] = res[:zi.shape[0]] + zi
